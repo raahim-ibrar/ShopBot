@@ -86,6 +86,10 @@ The browser uses signed HTTP-only cookies. Next.js calls FastAPI over separate s
 Set `PORTPAIR_API_URL`, `STOREFRONT_API_SECRET`, `ADMIN_API_SECRET`, and `SESSION_SECRET` as server-side environment variables on Vercel. Set both service keys, `ADMIN_PASSWORD`, the Neon URL, and the Anthropic key on the FastAPI host. Keep all of these values out of the repository and browser bundle.
 
 
+## Storefront demo
+
+![PortPair recommends an in-stock charger and looks up the price of the 30W option](demo.gif)
+
 ## Production deployment
 
 - [Public storefront](https://portpair-shopbot.vercel.app/)
