@@ -19,7 +19,9 @@ from .identity import Shopper
 from .memory import checkpoint_config, get_preferences, memory_backends, save_preferences
 from .model import ModelUnavailable, ShoppingModel
 from .orders import CheckoutError, place_order, quote_cart
-from .safety import SENSITIVE_CONTENT, asks_for_saved_device, confirms_checkout, refusal_for
+from .safety import (
+    SENSITIVE_CONTENT, asks_for_order_quote, asks_for_saved_device, confirms_checkout, refusal_for,
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -128,6 +130,7 @@ def build_graph(db: Database, model: ShoppingModel, checkpointer, store):
                     if any(get_product(db, shopper.store, sku) is None for sku in new_cart):
                         raise CheckoutError("A cart item was not found in this store.")
                     cart = new_cart
+                    requested_checkout |= asks_for_order_quote(runtime.context.message)
                     result = {"cart": cart}
                 elif name == "remember_preferences":
                     save_preferences(store, shopper, arguments)

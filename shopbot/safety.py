@@ -22,6 +22,10 @@ CONFIRM_ORDER = re.compile(
     r"(?:yes(?:,? please)?|confirm|(?:i )?confirm (?:the |my )?order"
     r"|(?:yes[,.]? )?(?:please )?(?:place|submit) (?:the |my )?order)[.!]?"
 )
+QUOTE_ORDER = re.compile(
+    r"(?:^|[.!?]\s+|\band\s+)(?:please\s+)?(?:prepare|quote|preview)\s+"
+    r"(?:(?:a|the|my|this)\s+)?(?:demo\s+)?(?:order|checkout)\b"
+)
 SENSITIVE_CONTENT = re.compile(r"postgres(?:ql)?://|\bsk-ant-[a-z0-9_-]+|(?<!\d)(?:\d[ -]?){13,19}(?!\d)", re.I)
 DEVICE_RECALL = re.compile(
     r"\bwhat (?:phone|device) (?:do i (?:use|have)|did i (?:ask|tell) (?:you|portpair) to remember|"
@@ -51,6 +55,10 @@ def refusal_for(message: str) -> str | None:
 
 def confirms_checkout(message: str) -> bool:
     return CONFIRM_ORDER.fullmatch(_normalized(message)) is not None
+
+
+def asks_for_order_quote(message: str) -> bool:
+    return QUOTE_ORDER.search(_normalized(message)) is not None
 
 
 def asks_for_saved_device(message: str) -> bool:

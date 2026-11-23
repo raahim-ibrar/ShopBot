@@ -142,6 +142,27 @@ def test_checkout_cannot_be_authorized_by_the_model_or_another_thread(monkeypatc
     assert receipt["tokens_in"] == receipt["tokens_out"] == 0
 
 
+def test_quote_requested_with_cart_update_is_prepared_when_model_only_sets_cart(monkeypatch):
+    monkeypatch.setattr(agent_module, "get_product", lambda *_: PRODUCT)
+    monkeypatch.setattr(agent_module, "quote_cart", lambda *_: {
+        "quote_id": "12345678-1234-1234-1234-1234567890ab",
+        "items": [{"quantity": 1, "name": PRODUCT["name"]}],
+        "total_cents": 1499,
+    })
+    model = FakeModel(ModelResponse([
+        action("set_cart", {"items": [{"sku": PRODUCT["sku"], "quantity": 1}]}),
+    ]))
+    graph = agent_module.build_graph(None, model, InMemorySaver(), InMemoryStore())
+
+    result = agent_module.run_turn(
+        graph, SHOPPER, "Set my cart to one charger and prepare a demo order for review.",
+    )
+
+    assert "Confirm order" in result["reply"]
+    assert [call["name"] for call in result["tool_calls"]] == ["set_cart", "prepare_checkout"]
+    assert [call[0] for call in model.calls] == ["sales"]
+
+
 def test_fallback_uses_real_results_when_reply_agent_is_unavailable(monkeypatch):
     monkeypatch.setattr(agent_module, "search_catalog", lambda *_: [PRODUCT])
     model = FakeModel(ModelResponse([action("search_catalog", {})], 11, 7), ModelUnavailable("timeout"))
