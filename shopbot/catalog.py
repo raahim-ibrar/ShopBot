@@ -34,10 +34,10 @@ def search_catalog(db: Database, store: Store, filters: SearchFilters) -> list[d
               AND (%(device)s::text IS NULL OR %(device)s = ANY(compatible_devices))
               AND (%(budget)s::int IS NULL OR price_cents <= %(budget)s)
               AND (NOT %(in_stock)s OR stock > 0)
-              AND NOT EXISTS (
+              AND (sku = %(sku_query)s OR NOT EXISTS (
                   SELECT 1 FROM unnest(%(terms)s::text[]) AS term
                   WHERE strpos(lower(name || ' ' || category || ' ' || description), term) = 0
-              )
+              ))
             ORDER BY price_cents, sku
             LIMIT %(limit)s
             """,
@@ -48,6 +48,7 @@ def search_catalog(db: Database, store: Store, filters: SearchFilters) -> list[d
                 "device": device_key(filters.device) if filters.device else None,
                 "budget": filters.max_price_cents,
                 "in_stock": filters.in_stock,
+                "sku_query": (filters.query or "").upper(),
                 "terms": re.findall(r"[a-z0-9]+", (filters.query or "").lower()),
                 "limit": filters.limit,
             },

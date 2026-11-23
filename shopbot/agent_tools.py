@@ -35,7 +35,7 @@ TOOL_INPUTS = {
 }
 
 TOOL_DESCRIPTIONS = {
-    "search_catalog": "Find products in this store. Filter by device (e.g. iPhone 15), category, max price in USD cents, and availability. Use a short product query or category, not the whole shopper message.",
+    "search_catalog": "Find products in this store. Filter by device (e.g. iPhone 15), category, max price in USD cents, and availability. Use short product terms or a category. For details about a single exact SKU, prefer get_product.",
     "get_product": "Find current details and stock for one exact SKU. Resolve references like 'the second one' from the prior results first.",
     "set_cart": "Replace this shopper's current cart with the desired complete list of items and quantities. Use an empty list to clear it. A cart change does not place an order.",
     "prepare_checkout": "Obtain a quote for the current cart. For an immediate checkout request naming products but no cart yet, call set_cart first in this same turn. A quote requires separate user confirmation.",

@@ -112,6 +112,9 @@ def test_search_respects_device_price_stock_and_seller(db):
     hits = search_catalog(db, WEBSITE, filters)
     assert [item["sku"] for item in hits] == ["CHG-USB20", "CHG-USB30"]
     assert search_catalog(db, Store("website", "other-seller"), filters) == []
+    exact_sku = search_catalog(db, WEBSITE, SearchFilters(query="cbl-c2c1"))
+    assert [item["sku"] for item in exact_sku] == ["CBL-C2C1"]
+    assert search_catalog(db, WEBSITE, SearchFilters(query="chg-qi2")) == []
     assert [item["sku"] for item in search_catalog(
         db, WEBSITE, SearchFilters(query="Lightning cable", device="iPhone 14"),
     )] == ["CBL-LIGHT"]
