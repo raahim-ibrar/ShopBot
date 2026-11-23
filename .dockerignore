@@ -1,0 +1,6 @@
+*
+!requirements.txt
+!shopbot/
+!shopbot/**
+**/__pycache__/
+**/*.pyc
